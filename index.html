@@ -87,8 +87,8 @@
 
       <!-- TAB 1: GIF -->
       <section id="tabcontent1" class="panel" role="tabpanel" aria-labelledby="tab1">
-        <!-- Para añadir uno: copia una línea de <figure>, cambia el archivo (src) y el número (alt y figcaption). Archivos de esta sección: 1.Af, 2.Af... -->
-        <div class="grid grid--gif">
+        <!-- Para añadir uno: copia una línea de <figure>, cambia el archivo (src) y el número (alt y figcaption). Archivos de esta sección: 1.Gif, 2.Gif... -->
+        <div class="grid grid--Af">
           <figure class="cell"><div class="gif-box"><img loading="lazy" src="1.gif" alt="Af 1"></div><figcaption>Af 1</figcaption></figure>
           <figure class="cell"><div class="gif-box"><img loading="lazy" src="2.gif" alt="Af 2"></div><figcaption>Af 2</figcaption></figure>
           <figure class="cell"><div class="gif-box"><img loading="lazy" src="3.gif" alt="GIF 3"></div><figcaption>GIF 3</figcaption></figure>
@@ -871,7 +871,7 @@
               ctx.lineTo(b.x, b.y);
               ctx.strokeStyle = "rgba(255, 79, 216, " + (0.85 * life) + ")";
               ctx.lineWidth = 2 + 7 * life;
-              ctx.shadowColor = "#ff4fd8";
+              ctx.shadowColor = "#f0f8ff";
               ctx.shadowBlur = 16 * life;
               ctx.stroke();
             }
@@ -899,9 +899,9 @@
               ctx.stroke();
             }
 
-            ctx.shadowColor = "#0090ff";
+            ctx.shadowColor = "#f0f8ff";
             ctx.shadowBlur = 10;
-            ctx.fillStyle = "#0090ff";
+            ctx.fillStyle = "#f0f8ff";
             ctx.beginPath();
             ctx.arc(orb.x, orb.y, 3, 0, Math.PI * 2);
             ctx.fill();
@@ -980,7 +980,7 @@
       --surface-2: #0090ff;
       --menu: #0090ff;
       --border: #0090ff;
-      --text: #0090ff;
+      --text: #003a66;
       --muted: #0090ff;
       --accent: #0090ff;
       --accent-ink: #ffffff;
