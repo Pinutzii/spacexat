@@ -832,39 +832,7 @@
       });
 
 
-      /* ---------- REPRODUCTOR ---------- */
-      var audio = document.getElementById("audio-player");
-      var playerBox = document.getElementById("music-player");
-      var playBtn = document.getElementById("play-btn");
-      var volume = document.getElementById("volume-slider");
-
-      audio.volume = parseFloat(volume.value);
-
-      /* ---------- MÚSICA AUTOMÁTICA ---------- */
-      /* true = suena sola; false = solo con el botón.
-         Los navegadores no dejan sonar sin que el visitante haga algo antes,
-         así que empieza con el primer clic, toque o tecla en la página. */
-      var AUTOPLAY = true;
-      var userPaused = false;
-      var startEvents = ["pointerdown", "pointerup", "touchend", "keydown"];
-
-      function stopWaiting() {
-        startEvents.forEach(function (ev) { document.removeEventListener(ev, startMusic, true); });
-      }
-
-      function startMusic(e) {
-        // Si el primer gesto es sobre el propio reproductor, manda el botón
-        if (e && e.target && e.target.closest && e.target.closest("#music-player")) { stopWaiting(); return; }
-        if (userPaused) { stopWaiting(); return; }
-        if (audio.networkState === 3 || audio.error) { stopWaiting(); return; }
-        audio.play().then(stopWaiting).catch(function () {});
-      }
-
-      if (AUTOPLAY) {
-        // Intento directo (algunos navegadores lo permiten) y, si no, al primer gesto
-        audio.play().catch(function () {});
-        startEvents.forEach(function (ev) { document.addEventListener(ev, startMusic, true); });
-      }
+    
 
       /* ---------- PANTALLA DE ENTRADA ---------- */
       var entrance = document.getElementById("entrance");
@@ -929,7 +897,7 @@
         audio.volume = parseFloat(volume.value);
       });
 
-      /* ---------- CURSOR ROSADO CON ESTELA ---------- */
+      /* ---------- CURSOR AZUL  ---------- */
       var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
       var calmMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
