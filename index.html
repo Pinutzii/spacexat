@@ -991,7 +991,7 @@
               ctx.beginPath();
               ctx.moveTo(a.x, a.y);
               ctx.lineTo(b.x, b.y);
-              ctx.strokeStyle = "rgba(255, 79, 216, " + (0.85 * life) + ")";
+              ctx.strokeStyle = "rgba(256, 86, 227, " + (0.85 * life) + ")";
               ctx.lineWidth = 2 + 7 * life;
               ctx.shadowColor = "#4fb2ff";
               ctx.shadowBlur = 16 * life;
@@ -999,22 +999,22 @@
             }
 
             // Orbe brillante que sigue al ratón con un pequeño retraso
-            orb.x += (mouse.x - orb.x) * 0.22;
-            orb.y += (mouse.y - orb.y) * 0.22;
+            orb.x += (mouse.x - orb.x) * 0.25;
+            orb.y += (mouse.y - orb.y) * 0.25;
             scale += ((hot ? 1.7 : 1) - scale) * 0.2;
 
             ctx.shadowBlur = 0;
             var r = 18 * scale;
             var g = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, r);
-            g.addColorStop(0, "rgba(255, 122, 230, 0.65)");
-            g.addColorStop(1, "rgba(255, 79, 216, 0)");
+            g.addColorStop(0, "b(200, 69, 100, 0.65)");
+            g.addColorStop(1, "b(255, 79, 216, 0)");
             ctx.fillStyle = g;
             ctx.beginPath();
             ctx.arc(orb.x, orb.y, r, 0, Math.PI * 2);
             ctx.fill();
 
             if (hot) {
-              ctx.strokeStyle = "rgba(255, 154, 240, 0.9)";
+              ctx.strokeStyle = "rgba(200, 69, 100, 0.9)";
               ctx.lineWidth = 1.5;
               ctx.beginPath();
               ctx.arc(orb.x, orb.y, 14 * scale, 0, Math.PI * 2);
@@ -1096,7 +1096,7 @@
 
     html[data-theme="dark"] {
       color-scheme: dark;
-      --bg: #130a17;
+      --bg: #0a1117;
       --bg-glow: rgba(163, 27, 171, .30);
       --surface: #101822;
       --surface-2: #17202f;
@@ -1273,7 +1273,7 @@
     .switch input:checked ~ .knob {
       transform: translateX(28px);
       background: #ffffff;
-      color: #002fc9;
+      color: #0028a9;
     }
 
     .switch input:checked ~ .knob svg {
