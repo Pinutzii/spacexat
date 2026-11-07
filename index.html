@@ -47,7 +47,27 @@
       </label>
     </header>
 
-   
+    <!-- REPRODUCTOR: asoma por detrás del menú -->
+    <div class="player-wrap">
+      <div class="music-player" id="music-player">
+        <div class="disc" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3z"/></svg>
+        </div>
+        <div class="player-meta">
+          <span class="np">Now Playing</span>
+          <span class="song">Favorite Song</span>
+        </div>
+        <button class="play-btn" id="play-btn" type="button" aria-label="Reproducir música">
+          <svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+        </button>
+        <div class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <input class="vol" id="volume-slider" type="range" min="0" max="1" step="0.01" value="0.5" aria-label="Volumen">
+        <audio id="audio-player" preload="metadata" loop>
+          <source src="music.mp3" type="audio/mpeg">
+        </audio>
+      </div>
+    </div>
 
     <nav class="tabs" role="tablist" aria-label="Secciones">
       <button class="tab" role="tab" id="tab1" data-tab="1" aria-controls="tabcontent1" aria-selected="true">After4D</button>
@@ -820,7 +840,31 @@
 
       audio.volume = parseFloat(volume.value);
 
-      
+      /* ---------- MÚSICA AUTOMÁTICA ---------- */
+      /* true = suena sola; false = solo con el botón.
+         Los navegadores no dejan sonar sin que el visitante haga algo antes,
+         así que empieza con el primer clic, toque o tecla en la página. */
+      var AUTOPLAY = true;
+      var userPaused = false;
+      var startEvents = ["pointerdown", "pointerup", "touchend", "keydown"];
+
+      function stopWaiting() {
+        startEvents.forEach(function (ev) { document.removeEventListener(ev, startMusic, true); });
+      }
+
+      function startMusic(e) {
+        // Si el primer gesto es sobre el propio reproductor, manda el botón
+        if (e && e.target && e.target.closest && e.target.closest("#music-player")) { stopWaiting(); return; }
+        if (userPaused) { stopWaiting(); return; }
+        if (audio.networkState === 3 || audio.error) { stopWaiting(); return; }
+        audio.play().then(stopWaiting).catch(function () {});
+      }
+
+      if (AUTOPLAY) {
+        // Intento directo (algunos navegadores lo permiten) y, si no, al primer gesto
+        audio.play().catch(function () {});
+        startEvents.forEach(function (ev) { document.addEventListener(ev, startMusic, true); });
+      }
 
       /* ---------- PANTALLA DE ENTRADA ---------- */
       var entrance = document.getElementById("entrance");
@@ -938,7 +982,44 @@
 
             while (points.length && now - points[0].t > TRAIL_MS) points.shift();
 
-           
+            // Estela
+            for (var i = 1; i < points.length; i++) {
+              var a = points[i - 1];
+              var b = points[i];
+              var life = 1 - (now - b.t) / TRAIL_MS;
+              if (life <= 0) continue;
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.strokeStyle = "rgba(255, 79, 216, " + (0.85 * life) + ")";
+              ctx.lineWidth = 2 + 7 * life;
+              ctx.shadowColor = "#4fb2ff";
+              ctx.shadowBlur = 16 * life;
+              ctx.stroke();
+            }
+
+            // Orbe brillante que sigue al ratón con un pequeño retraso
+            orb.x += (mouse.x - orb.x) * 0.22;
+            orb.y += (mouse.y - orb.y) * 0.22;
+            scale += ((hot ? 1.7 : 1) - scale) * 0.2;
+
+            ctx.shadowBlur = 0;
+            var r = 18 * scale;
+            var g = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, r);
+            g.addColorStop(0, "rgba(255, 122, 230, 0.65)");
+            g.addColorStop(1, "rgba(255, 79, 216, 0)");
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(orb.x, orb.y, r, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (hot) {
+              ctx.strokeStyle = "rgba(255, 154, 240, 0.9)";
+              ctx.lineWidth = 1.5;
+              ctx.beginPath();
+              ctx.arc(orb.x, orb.y, 14 * scale, 0, Math.PI * 2);
+              ctx.stroke();
+            }
 
             ctx.shadowColor = "#4fc3ff";
             ctx.shadowBlur = 10;
