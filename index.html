@@ -47,27 +47,7 @@
       </label>
     </header>
 
-    <!-- REPRODUCTOR: asoma por detrás del menú -->
-    <div class="player-wrap">
-      <div class="music-player" id="music-player">
-        <div class="disc" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3z"/></svg>
-        </div>
-        <div class="player-meta">
-          <span class="np">Now Playing</span>
-          <span class="song">Favorite Song</span>
-        </div>
-        <button class="play-btn" id="play-btn" type="button" aria-label="Reproducir música">
-          <svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-          <svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
-        </button>
-        <div class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-        <input class="vol" id="volume-slider" type="range" min="0" max="1" step="0.01" value="0.5" aria-label="Volumen">
-        <audio id="audio-player" preload="metadata" loop>
-          <source src="music.mp3" type="audio/mpeg">
-        </audio>
-      </div>
-    </div>
+   
 
     <nav class="tabs" role="tablist" aria-label="Secciones">
       <button class="tab" role="tab" id="tab1" data-tab="1" aria-controls="tabcontent1" aria-selected="true">After4D</button>
