@@ -832,7 +832,39 @@
       });
 
 
-    
+      /* ---------- REPRODUCTOR ---------- */
+      var audio = document.getElementById("audio-player");
+      var playerBox = document.getElementById("music-player");
+      var playBtn = document.getElementById("play-btn");
+      var volume = document.getElementById("volume-slider");
+
+      audio.volume = parseFloat(volume.value);
+
+      /* ---------- MÚSICA AUTOMÁTICA ---------- */
+      /* true = suena sola; false = solo con el botón.
+         Los navegadores no dejan sonar sin que el visitante haga algo antes,
+         así que empieza con el primer clic, toque o tecla en la página. */
+      var AUTOPLAY = true;
+      var userPaused = false;
+      var startEvents = ["pointerdown", "pointerup", "touchend", "keydown"];
+
+      function stopWaiting() {
+        startEvents.forEach(function (ev) { document.removeEventListener(ev, startMusic, true); });
+      }
+
+      function startMusic(e) {
+        // Si el primer gesto es sobre el propio reproductor, manda el botón
+        if (e && e.target && e.target.closest && e.target.closest("#music-player")) { stopWaiting(); return; }
+        if (userPaused) { stopWaiting(); return; }
+        if (audio.networkState === 3 || audio.error) { stopWaiting(); return; }
+        audio.play().then(stopWaiting).catch(function () {});
+      }
+
+      if (AUTOPLAY) {
+        // Intento directo (algunos navegadores lo permiten) y, si no, al primer gesto
+        audio.play().catch(function () {});
+        startEvents.forEach(function (ev) { document.addEventListener(ev, startMusic, true); });
+      }
 
       /* ---------- PANTALLA DE ENTRADA ---------- */
       var entrance = document.getElementById("entrance");
@@ -854,16 +886,85 @@
         document.body.classList.remove("locked");
       }
 
-    
+      var songLabel = playerBox.querySelector(".song");
+      var songText = songLabel.textContent;
 
-    
+      // Si el audio no se encuentra o no se puede reproducir, lo indica en el propio reproductor
+      function audioFailed() {
+        playerBox.classList.remove("playing");
+        songLabel.textContent = "No se encuentra music.mp3";
+      }
 
-     
+      audio.querySelectorAll("source").forEach(function (src) {
+        src.addEventListener("error", audioFailed);
+      });
+      audio.addEventListener("error", audioFailed);
+      audio.addEventListener("loadedmetadata", function () { songLabel.textContent = songText; });
+      window.addEventListener("load", function () {
+        if (audio.networkState === 3 || audio.error) audioFailed();
+      });
 
-    
-     
+      playBtn.addEventListener("click", function () {
+        if (audio.paused) {
+          // networkState 3 = el navegador no encontró ninguna fuente de audio
+          if (audio.networkState === 3 || audio.error) { audioFailed(); return; }
+          audio.play().catch(audioFailed);
+        } else {
+          userPaused = true;
+          audio.pause();
+        }
+      });
 
-     
+      audio.addEventListener("play", function () {
+        playerBox.classList.add("playing");
+        playBtn.setAttribute("aria-label", "Pausar música");
+      });
+
+      audio.addEventListener("pause", function () {
+        playerBox.classList.remove("playing");
+        playBtn.setAttribute("aria-label", "Reproducir música");
+      });
+
+      volume.addEventListener("input", function () {
+        audio.volume = parseFloat(volume.value);
+      });
+
+      /* ---------- CURSOR ROSADO CON ESTELA ---------- */
+      var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+      var calmMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (finePointer && !calmMotion) {
+        var canvas = document.createElement("canvas");
+        canvas.className = "cursor-fx";
+        canvas.setAttribute("aria-hidden", "true");
+        document.body.appendChild(canvas);
+        var ctx = canvas.getContext("2d");
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        var resize = function () {
+          canvas.width = window.innerWidth * dpr;
+          canvas.height = window.innerHeight * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+        resize();
+        window.addEventListener("resize", resize);
+
+        var TRAIL_MS = 420;
+        var points = [];
+        var mouse = { x: 0, y: 0 };
+        var orb = { x: 0, y: 0 };
+        var active = false;
+        var hot = false;
+        var scale = 1;
+
+        document.addEventListener("mousemove", function (e) {
+          mouse.x = e.clientX;
+          mouse.y = e.clientY;
+          if (!active) { orb.x = mouse.x; orb.y = mouse.y; active = true; }
+          points.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+          if (points.length > 80) points.shift();
+          hot = !!(e.target.closest && e.target.closest("a, button, label, input, .item"));
+        });
 
         document.documentElement.addEventListener("mouseleave", function () {
           active = false;
